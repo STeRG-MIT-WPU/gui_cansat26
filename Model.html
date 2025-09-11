@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rocket 3D Viewer</title>
+  <style>
+    body { margin: 0; overflow: hidden; background:radial-gradient(ellipse,#000000 0%,#2B2A2A 100%);}
+    #rocket-container {height: 100vh;}
+    #ui {
+      max-width: 80%;
+      position: absolute; top: 10px; left: 10px; z-index: 10;
+      background: rgba(255,255,255,0.8); padding: 10px; border-radius: 6px;
+    }
+    #ui span { display: inline-block; min-width: 60px; }
+    #reset-btn {cursor: pointer; margin-top: 5px; }
+  </style>
+  <!-- Three.js and extensions -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.126.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- PapaParse for CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- GSAP for camera animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+  <div id="rocket-container"></div>
+  <div id="ui">
+    <div>
+      <span>Roll: <span id="roll-value">0°</span></span>
+      <span>Pitch: <span id="pitch-value">0°</span></span>
+      <span>Yaw: <span id="yaw-value">0°</span></span>
+    </div>
+    <button id="reset-btn">Reset View</button>
+    <button id="calib">Calibrate </button>
+  </div>
+  <script src="js/modelv2.js"></script>
+</body>
+</html>
