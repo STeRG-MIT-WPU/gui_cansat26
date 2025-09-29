@@ -236,12 +236,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function stopDataUpdates() {
-        console.log("Data updates stopped.");
-    }
-
-    loadCSVData();
-    setupTimer();
-    addNewRowToTable(lastRow);
-    setInterval(updateClock, 1000);
+    // --- INITIALIZE THE DASHBOARD ---
+    loadCSVData(); // Start the data polling loop
+    setupTimer(); // This can be started if it's independent of CSV data
+    setInterval(updateClock, 1000); // Start the clock
 });
