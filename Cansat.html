@@ -4,22 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="Screenshot 2025-03-11 173318.png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="Screenshot 2025-03-11 173318.png">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">                           
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="Cansat.css">
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <title>CANSAT GUI</title>
 </head>
 <body>
-     <nav class="navbar">
+   <nav class="navbar">
             <div class="navbar-lago">
-                <img src="IMG_6366 (1).png"  width="55px" height="55px">
+                <img src="Image\IMG_6366 (1).png"  width="60px" height="60px">
             </div>
 
             <div class="team-id">    
                 <h2>TEAM ID- 2024ASI-035</h2>
             </div>
 
-            <div class="team-name">
-              <img src="TEAM_VISHWASHANTI-removebg-preview.png" alt="team-name" width="auto" height="55px">
+            <div class="team-name"> 
+              <h1>TEAM VISHWASHANTI</h1>
             </div>
 
             <div class="battery-container">
@@ -30,26 +37,33 @@
             <div class="timer-display">
                 <div  id="timer"><h3>T-00:00:00</h3></div>
             </div> 
-        <div class="logo">
-        <img src="Sterg - 1.png" width="auto" height="75">    
-        </div>  
-      </nav>
- <div class="nav-divider"> </div>
 
- <!-- column 1 -->      
- 
-  <div class="card">
+            <div class="logo">
+               <img src="Image\Sterg - 1.png" width="auto" height="75">    
+            </div>
+
+      </nav>
+
+ <div class="nav-divider"></div>
+
+  <!-- column 1 -->   
+
+ <div class="card">
         <div class="card-header">METADATA </div>
         <hr size="2" color="#10EAF0">
            <div class="data-grid">
                 <div class="data-item">
                    <div class="data-label">Team ID</div>
-                   <div class="data-value"><span id="team-id">---</span></div>
-            </div>
+                   <div class="data-value"><span id="team-id">035</span></div>
+                 </div>
+                 <div class="nav_divider1"></div>
+
                 <div class="data-item">
                    <div class="data-label">Packet Count</div>
                    <div class="data-value"><span id="packets">---</span></div>
-            </div>
+                </div>
+                <div class="nav_divider2"></div>
+               
                 <div class="data-item">
                    <div class="data-label">Timestamp</div>
                    <div class="data-value"><span id="time">---</span></div>
@@ -57,64 +71,79 @@
         </div>
     </div>
     
-     <div class="card-1">
+
+    <div class="card-1">
         <div class="card-header">ACCELERATION</div>
         <hr width="103%" size="2" color="#10EAF0">
              <div class="data-grid">
                  <div class="data-items">
                     <div class="data-label">X</div>
-                    <div class="data-value"><span id="AX">---m/s²</span></div>
+                    <div class="data-value"><span id="AX">---</span> m/s²</div>
                  </div>
+                 <div class="nav_divider3"></div>
                  <div class="data-item">
                    <div class="data-label">Y</div>
-                   <div class="data-value"><span id="AY">---m/s²</span></div>
+                   <div class="data-value"><span id="AY">---</span> m/s²</div>
                 </div>
                 <div class="data-item">
                    <div class="data-label">Z</div>
-                   <div class="data-value"><span id="AZ">---m/s²</span></div>
-             </div>
+                   <div class="data-value"><span id="AZ">---</span> m/s²</div>
+                </div>
+                <div class="nav_divider4"></div>
         </div>
     </div>
-    
-    <div class="card-2">
+
+
+     <div class="card-2">
         <div class="card-header">GYROSCOPE</div>
         <hr width="103%" size="2" color="#10EAF0">
              <div class="data-grid">
                  <div class="data-items">
                     <div class="data-label">X</div>
-                    <div class="data-value"><span id="GX">---dps</span></div>
+                    <div class="data-value"><span id="GX">---</span> dps</div>
                  </div>
+                   <div class="nav_divider5"></div>
+
                  <div class="data-item">
                    <div class="data-label">Y</div>
-                   <div class="data-value"><span id="GY">---dps</span></div>
+                   <div class="data-value"><span id="GY">---</span> dps</div>
                 </div>
+                 <div class="nav_divider6"></div>
+
                 <div class="data-item">
                    <div class="data-label">Z</div>
-                   <div class="data-value"><span id="GZ">---dps</span></div>
+                   <div class="data-value"><span id="GZ">---</span> dps</div>
              </div>
         </div>
 
     </div>
-        <div class="card-3">
+
+     <div class="card-3">
         <div class="card-header">MAGNETOMETER</div>
         <hr width="103%" size="2" color="#10EAF0">
              <div class="data-grid">
                  <div class="data-items">
                     <div class="data-label">X</div>
-                    <div class="data-value"><span id="MX">---μT</span></div>
+                    <div class="data-value"><span id="MX">---µT</span></div>
                  </div>
+                   <div class="nav_divider5"></div>
+
                  <div class="data-item">
                    <div class="data-label">Y</div>
-                   <div class="data-value"><span id="MY">---μT</span></div>
+                   <div class="data-value"><span id="MY">--- µT</span></div>
                 </div>
+                 <div class="nav_divider6"></div>
+
                 <div class="data-item">
                    <div class="data-label">Z</div>
-                   <div class="data-value"><span id="MZ">---μT</span></div>
+                   <div class="data-value"><span id="MZ">--- µT</span></div>
              </div>
         </div>
-    </div>
 
-   <!-- column 2 -->
+    </div>
+       
+       
+<!-- column 2 -->
 
  <div class="card-4">
         <div class="card-header">GNSS DATA</div>
@@ -122,115 +151,168 @@
              <div class="data-grid">
                  <div class="data-items">
                     <div class="data-label">LATITUDE</div>
-                    <div class="data-value"><span id="latitude">---deg</span></div>
+                    <div class="data-value"><span id="lat">---deg</span> deg</div>
                  </div>
+                   <div class="nav_divider9"></div>
+                   
                  <div class="data-item">
                    <div class="data-label">LONGITUDE</div>
-                   <div class="data-value"><span id="longitude">---deg</span></div>
+                   <div class="data-value"><span id="lng">---deg</span> deg</div>
                 </div>
+                 <div class="nav_divider10"></div>
                 <div class="data-item">
                    <div class="data-label">ALTITUDE</div>
-                   <div class="data-value"><span id="altitude">---m</span></div>
+                   <div class="data-value"><span id="altitude">---m</span> m</div>
                </div>
+               <div class="nav_divider11"></div>
                  <div class="data-item">
                    <div class="data-label">SATELLITE</div>
-                   <div class="data-value"><span id="satellite">12</span></div>
+                   <div class="data-value"><span id="satellites">--</span></div>
              </div>
         </div>
     </div>    
 
-    <div class="maps">
-      map
+    <!--maps-->
+    <div class="maps" id="map">
+      <iframe src="3DMaps.html" width="100%" height="100%" frameborder="0" border-radius="20"></iframe>
     </div>
 
-
-  <div class="error-flags-container">
+    <!--error_flags-->
+    <div class="error-flags-container">
         <h2 class="error-title">ERROR FLAGS</h2>
         <div class="error-grid">
-            <button class="error-button active">E_FIN</button>
-            <button class="error-button">E_MEM</button>
-            <button class="error-button">E_CS</button>
-            <button class="error-button">E_FLASH</button>
-            <button class="error-button">EN_BATT</button>
-            <button class="error-button">E_COMMS_LOSS</button>
-            <button class="error-button">E_SD</button>
-            <button class="error-button">E_PARA</button>
-            <button class="error-button">E_COMMS_DEL</button>
+            <div class="error-button" id="e_fin">E_FIN</div>
+            <div class="error-button" id="e_mem">E_MEM</div>
+            <div class="error-button" id="e_cs">E_CS</div>
+            <div class="error-button" id="e_flash">E_FLASH</div>
+            <div class="error-button" id="e_batt">E_BATT</div>
+            <div class="error-button" id="e_comms_loss">E_COMMS_LOSS</div>
+            <div class="error-button" id="e_sd">E_SD</div>
+            <div class="error-button" id="e_para">E_PARA</div>
+            <div class="error-button" id="e_comms_del">E_COMMS_DEL</div>
         </div>
     </div>   
 
+<!--cansat_container-->
+
     <div class="cansat-container">
-       <img src="Untitled-removebg-preview.png" style="width: 280px; height: auto;">
+      <!-- <img src="Untitled-removebg-preview.png" style="width: 280px; height: auto;"> -->
+       <iframe src="Model.html" width="100%" height="100%" frameborder="0"></iframe>
     </div>
 
-<div class="telemetry-card">
+
+<!--graph-->   
+
+ <div class="graph">
+   <div class="graph-grid">
+        <div class="graph-1">
+            <div class="graph-name"></div>
+            <canvas id="accelerationChart" ></canvas>
+        </div>
+      
+
+        <div class="graph-1">
+           <div class="graph-name"></div>
+           <canvas id="altitudeChart"></canvas>
+         </div>
+
+         <div class="graph-1">
+            <div class="graph-name"></div>
+            <canvas id="velocityChart"></canvas>
+         </div>
+         
+            <div class="graph-1">
+           <div class="graph-name"></div>
+           <canvas id="temperatureChart"></canvas>
+         </div>
+   </div>
+ </div>
+ 
+ <!--command line-->
+
+ <div class="command-box">
+    <input id="commandInput" type="text" placeholder="ENTER COMMAND..." autocomplete="off">
+</div>
+
+<!--telemetry_data-->
+   
+   <div class="telemetry-card">
         <div class="telemetry-header">TELEMETRY DATA</div>
         <hr width="103%" size="2" color="#10EAF0">
         <div class="data-grid-1">
         <div class="data-box">
             <span class="label">BMP TEMP</span>
             <span class="value" id="bmp-temp">---°C</span>
+            <span class="unit">°C</span>
         </div>
         
         <div class="data-box">
             <span class="label">PRESSURE</span>
             <span class="value" id="pressure">---P</span>
+            <span class="unit">P</span>
         </div>
         
         <div class="data-box">
-            <span class="label">RSSI-LoRa</span>
-            <span class="value" id="rssi">---dBM</span>
+            <span class="label">HUMIDITY</span>
+            <span class="value" id="humidity">---%</span>
+            <span class="unit">%</span>
         </div>
         
         <div class="data-box">
             <span class="label">CURRENT</span>
             <span class="value" id="current">---mA</span>
+            <span class="unit">mA</span>
         </div>
         
         <div class="data-box">
             <span class="label">LUX</span>
-            <span class="value" id="lux">---LX</span>
+            <span class="value" id="lux">102 </span>
+            <span class="unit">Lx</span>
         </div>
 
          <div class="data-box">
             <span class="label">VOLTAGE</span>
             <span class="value" id="voltage">---V</span>
+            <span class="unit">V</span>
         </div>
       </div> 
     </div>
+<!--state_change-->
 
 <div class="progress-container">
     <div class="progress-step">
       <div class="circle"></div>
-      <p>BOOT</p>
+      <div id="launch-phase" class="phase">BOOT</div>
     </div>
     <div class="line"></div>
 
     <div class="progress-step">
       <div class="circle"></div>
-      <p>IDLE</p>
+      <div id="ascent-phase" class="phase">IDLE</div>
     </div>
     <div class="line"></div>
 
     <div class="progress-step">
       <div class="circle"></div>
-      <p>ASCENT</p>
+      <div id="coast-phase" class="phase">ASCENT</div>
     </div>
     <div class="line"></div>
 
     <div class="progress-step">
       <div class="circle"></div>
-      <p>DESCENT</p>
+      <div id="descent-phase" class="phase">DESCENT</div>
     </div>
     <div class="line"></div>
 
     <div class="progress-step">
       <div class="circle"></div>
-      <p>RECOVERY</p>
+      <div id="recovery-phase" class="phase">RECOVERY</div>
     </div>
   </div>
 
-  <div class="control-panel">
+<!--Control_panel-->
+
+<div class="control-panel">
       <button class="control-button">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-power-icon lucide-power"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>
         <span class="label">START</span>  
@@ -256,39 +338,13 @@
         <span class="label">EM_SIM</span>
       </button>
   </div>
+  
+<div class="last-divider"> </div>
 
 
-<div class="graph">
-   <div class="graph-grid">
-  <div class="graph-1">
-    <div class="graph-name">ACCELERATION</div>
-  </div>
 
-  <div class="graph-1">
-    <div class="graph-name">ALTITUDE</div>
-  </div>
-
-  <div class="graph-1">
-    <div class="graph-name">VELOCITY</div>
-  </div>
-
-    <div class="graph-1">
-    <div class="graph-name">TEMPRETURE</div>
-  </div>
-
-  </div>
-</div>  
- 
-<div class="command-box">
-    <input id="commandInput" type="text" placeholder="ENTER COMMAND..." autocomplete="off">
-</div>
-
-
-    <div class="last-divider"> </div>
-
-
-<script src="state.js"></script>
-<script src="data.js"></script>
-<script src="Battery.js"></script>
-
+<script src="js\data3.js"></script>
+<script src="js\Battery.js"></script>
+<script src="js\graph2.js"></script>
+<script src="js\3DMapsV2.js"></script>
 </body>

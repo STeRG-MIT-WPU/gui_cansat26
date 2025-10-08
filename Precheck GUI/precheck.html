@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Screenshot 2025-03-11 173318.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Anonymous+Pro" />
+    <link rel="stylesheet" href="precheck.css">
+    <title>Preckeck GUI</title>
+</head>
+<body>
+     <nav class="navbar">
+
+
+           <div class="navbar-lago">
+                <img src="IMG_6366 (1).png"  width="75px" height="75px">
+            </div>
+
+            <div class="team-id">    
+                <h2>TEAM ID- 2024ASI-035</h2>
+            </div>
+
+           <div class="precheck-name">
+              CANSAT PRESCHECK
+           </div>
+         
+           <div class="timer-display">
+                <div  id="timer"><h3>T-00:00:00</h3></div>
+            </div> 
+
+           <div class="logo">
+             <img src="Sterg - 1.png" width="auto" height="95">    
+           </div>
+
+        <div class="nav-divider"></div>
+ </nav> 
+  <!--main-grid-->
+ <div class="main-grid">  
+     <!--left-coloum-->
+  <div class="left-panel">
+            <div class="checks-container">
+                <button class="checks-label" id="mechanical-check">Mechanical Checks</button>
+                <div class="check-value" id="mechanical-check-value">Normal</div>
+            </div>
+            <div class="checks-container">
+                <button class="checks-label" id="mounting-check">Mounting Checks</button>
+                <div class="check-value" id="mounting-check-value">Normal</div>
+            </div>
+            <div class="checks-container">
+                <button class="checks-label" id="communication-check">Communication Estabishment</button>
+                <div class="check-value" id="communication-check-value">Awaiting</div>
+            </div>
+            <div class="checks-container">
+                <button class="checks-label" id="parachute-check">Parachute Checks</button>
+                <div class="check-value" id="parachute-check-value">Normal</div>
+            </div>
+        </div>
+   
+
+        <!--middle-coloum-->
+         <div class="Cansat-conatainer">
+           <div class="loading-bar" id="loading_circle"></div>  
+           <!--<img src="Untitled-removebg-preview.png" alt="Cansat-modal" id=cansat height="450px" width="auto">-->
+         <div id="cansat"><iframe src="precheck_model.html" width="100%" height="100%" ></iframe></div>
+             <button class="initiate-button" id="initiate_button">Initiate Mission Sequence</button>
+        </div>
+
+
+        <!-- right panel -->
+         <div class="right_panel">
+            <div class="checks-container">
+                <button class="checks-label" id="sensor-check">Sensor Initialization</button>
+                <div class="check-value" id="sensor-check-value">Normal</div>
+            </div>
+            <div class="checks-container">
+                <button class="checks-label" id="battery-check">Battery & SD Card Check</button>
+                <div class="check-value" id="battery-check-value">Awaiting</div>
+            </div>
+            <div class="checks-container">
+                <button class="checks-label" id="systems-check">Systems Check</button>
+                <div class="check-value" id="systems-check-value">Normal</div>
+            </div>
+            <div class="checks-container">
+                <button class="checks-label" id="parachute-check">Telemetry Establishment</button>
+                <div class="check-value" id="telemetry-check-value">Normal</div>
+            </div>
+         </div>
+    </div>
+
+    <div class="dashboard-footer">
+        <div class="sensor-calibration-block-left">
+            <div class="sensor-calibration-title">Sensor Calibration</div>
+            <div class="section-divider-left"></div>
+            <ul class="sensor-list">
+                <li><label><input type="checkbox" checked> BNO055</label></li>
+                <li><label><input type="checkbox" checked> BME280</label></li>
+                <li><label><input type="checkbox" checked> ICM20948</label></li>
+                <li><label><input type="checkbox" checked> VEML6030</label></li>
+                <li><label><input type="checkbox" checked> Quectel L89</label></li>
+            </ul>
+        </div>
+
+          <div class="sensor-calibration-block-right">
+            <div class="sensor-calibration-title">Sensor Calibration</div>
+            <div class="section-divider-right"></div>
+            <ul class="sensor-list">
+                <li><label><input type="checkbox" checked>SIM 800L V2</label></li>
+                <li><label><input type="checkbox" checked>INA219</label></li>
+                <li><label><input type="checkbox" checked>ArduCam</label></li>
+                <li><label><input type="checkbox" checked>MISC 5524</label></li>
+                <li><label><input type="checkbox" checked>Xbee S3 PRO</label></li>  
+            </ul>
+    </div>
+  </div>
+
+
+
+    <script src="precheck.js"></script>  
+</body>
+</html>

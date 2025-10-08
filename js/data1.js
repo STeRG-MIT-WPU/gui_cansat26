@@ -3,10 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const updateInterval = 1000; // Fetch new data every 1000 ms (1 second)
     let dataIntervalId = null;   // This will store the ID of our interval
 
-    /**
-     * Updates the text content of an element, preserving its unit.
-     * IMPORTANT: This is for numeric values only.
-     */
+    
     function updateValue(id, newValue) {
         const el = document.getElementById(id);
         if (!el) return;
@@ -22,7 +19,28 @@ document.addEventListener("DOMContentLoaded", function () {
             el.textContent = newText;
         }
     }
+function updateDashboard(data) {
+        for (let key in data) {
+            let value = data[key];
+            if (key === "SOFTWARE_STATE") {
+                updatePhaseDiv(value);
+            } else if (key === "ERROR_FLAGS") {
+                 updateErrorFlags(value);
+            } else {
+                const id = getElementId(key);
+                if (id && lastData[key] !== value) {
+                    if (Array.isArray(id)) {
+                        id.forEach(singleId => updateValue(singleId, value));
+                    } else {
+                        updateValue(id, value);
+                    }
+                }
+            }
+        }
 
+        lastData = { ...data };
+        updateBatteryFromVoltage(parseFloat(data["VOLTAGE"]));
+    }
     /**
      * Maps CSV header names to the corresponding HTML element IDs.
      */
@@ -30,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const idMap = {
             "TEAM_ID": "teamid",
             "MISSION_TIME": "time",
-            "PACKET COUNT": "packets", // Note: The CSV header might be PACKET_COUNT
+            "PACKET_COUNT": "packets", 
             "AX": "AX", "AY": "AY", "AZ": "AZ",
             "GX": "GX", "GY": "GY", "GZ": "GZ",
             "MX": "MX", "MY": "MY", "MZ": "MZ",
@@ -44,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "VOLTAGE": "voltage",
             "PRESSURE": "pressure",
             "Gas": "gas",
-            "Error": "error-flag",
+            "ERROR_FLAGS": "error",
             'LORA_RSSI': 'rssi',
         };
         // Use trim() on the key to handle potential whitespace from the CSV header
@@ -94,6 +112,35 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function updateErrorFlags(hexValue) {
+    const errorBitMap = {
+        0: "e_fin",
+        1: "e_mem",
+        2: "e_cs",
+        3: "e_flash",
+        4: "e_batt",
+        5: "e_comms_loss",
+        6: "e_sd",
+        7: "e_para",
+        8: "e_comms_del"
+    };
+
+    // Reset all error buttons
+    document.querySelectorAll(".error-grid .error-button, .error-grid .error-button-abort")
+        .forEach(btn => btn.className = "error-button");
+
+    // Convert hex to 9-bit binary string
+    let binary = parseInt(hexValue, 16).toString(2).padStart(9, '0');
+
+    // Apply active state for each '1'
+    for (let i = 0; i < 9; i++) {
+        if (binary[binary.length - 1 - i] === '1') {  // LSB first
+            const el = document.getElementById(errorBitMap[i]);
+            if (el) el.className = "error-button-abort";
+        }
+    }
+}
+
     /**
      * A helper function to parse raw CSV text.
      */
@@ -113,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return result;
     }
 
-    // --- CONTROL FUNCTIONS ---
+   // --- CONTROL FUNCTIONS ---
     function startUpdates() {
         if (dataIntervalId) return;
         console.log("Starting live data updates...");
@@ -130,4 +177,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- START THE PROCESS ---
     startUpdates();
+    updateDashboard();
 });

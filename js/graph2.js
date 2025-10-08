@@ -16,13 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     borderWidth: 1.5,
                     tension: 0.3,
                     fill: true,
-                    pointRadius: 0,       // 🔹 removes dots
-                    pointHoverRadius: 0   // 🔹 no hover dots
+                    pointRadius: 0,       // removes dots
+                    pointHoverRadius: 0   // no hover dots
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: false, // 🔹 disables animation
                 plugins: {
                     title: {
                         display: true,
@@ -45,10 +46,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Initialize All Charts ---
-    const accChart = new Chart(document.getElementById('accelerationChart').getContext('2d'), createChartConfig('Acceleration', 'm/s²'));
-    const altChart = new Chart(document.getElementById('altitudeChart').getContext('2d'), createChartConfig('Altitude', 'Meters (m)'));
-    const velChart = new Chart(document.getElementById('velocityChart').getContext('2d'), createChartConfig('Velocity', 'm/s'));
-    const tempChart = new Chart(document.getElementById('temperatureChart').getContext('2d'), createChartConfig('Temperature', 'Celsius (°C)'));
+    const accChart = new Chart(
+        document.getElementById('accelerationChart').getContext('2d'),
+        createChartConfig('Acceleration', 'm/s²')
+    );
+    const altChart = new Chart(
+        document.getElementById('altitudeChart').getContext('2d'),
+        createChartConfig('Altitude', 'Meters (m)')
+    );
+    const velChart = new Chart(
+        document.getElementById('velocityChart').getContext('2d'),
+        createChartConfig('Velocity', 'm/s')
+    );
+    const tempChart = new Chart(
+        document.getElementById('temperatureChart').getContext('2d'),
+        createChartConfig('Temperature', 'Celsius (°C)')
+    );
 
     // --- Fetch and Parse CSV Data ---
     function loadGraphData() {
@@ -99,4 +112,3 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(loadGraphData, updateInterval);
     loadGraphData();
 });
-

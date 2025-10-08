@@ -94,7 +94,7 @@ function initControls() {
 function loadRocketModel() {
     const loader = new THREE.GLTFLoader();
     loader.load(
-        'model.glb',
+        'CanSat.glb',
         (gltf) => {
             rocket = gltf.scene;
 
@@ -130,7 +130,7 @@ function setupCSVPolling() {
 }
 
 function loadCSVData() {
-    Papa.parse('telemetry.csv', {
+    Papa.parse('data.csv', {
         download: true,
         header: true,
         skipEmptyLines: true,
@@ -209,7 +209,7 @@ function calibrateRocket(data) {
 
     if (accelAngles && !isNaN(yaw)) {
         calibRoll = accelAngles.roll;
-        calibPitch = accelAngles.pitch - 10;
+        calibPitch = accelAngles.pitch - 10;        //80° offset for launch rod
         calibYaw = yaw;
         isCalibrated = true;
         console.log("Calibration complete:", { calibRoll, calibPitch, calibYaw });

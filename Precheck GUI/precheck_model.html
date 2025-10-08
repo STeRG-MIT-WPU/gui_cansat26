@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rocket Spin</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.126.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- PapaParse for CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- GSAP for camera animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; background: transparent; }
+    #rocket-container { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="rocket-container"></div>
+
+  <script>
+    let scene, camera, renderer, rocket, container;
+
+    function init() {
+      container = document.getElementById('rocket-container');
+
+      // Scene
+      scene = new THREE.Scene();
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(
+        60,
+        container.clientWidth / container.clientHeight,
+        0.1,
+        100
+      );
+      camera.position.set(0, 6, -11);
+      camera.lookAt(0, 0, 0);
+
+      // Renderer with transparent background
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      // Lights
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+      dirLight.position.set(5, 10, 5);
+      scene.add(dirLight);
+
+      // Load rocket model
+      const loader = new THREE.GLTFLoader();
+      loader.load(
+        "CanSat.glb",
+        (gltf) => {
+          rocket = gltf.scene;
+
+          // Auto scale & center
+          const box = new THREE.Box3().setFromObject(rocket);
+          const size = new THREE.Vector3();
+          box.getSize(size);
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const desiredSize = 6;
+          rocket.scale.setScalar(desiredSize / maxDim);
+          rocket.rotation.x = Math.PI / 2; // Align rocket vertically
+
+          box.setFromObject(rocket);
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+          rocket.position.sub(center); // Center the model
+
+          scene.add(rocket);
+        },
+        undefined,
+        (err) => console.error("Error loading model:", err)
+      );
+
+      window.addEventListener('resize', onWindowResize);
+      animate();
+    }
+
+    function onWindowResize() {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Spin rocket around yaw axis (Y)
+      if (rocket) {
+        rocket.rotation.z -= 0.025; // Adjust speed here
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let isDataAvailable = true;
     const timer = 1000; // 1 second refresh
 
+    const steps = document.querySelectorAll(".progress-step");
+    const lines = document.querySelectorAll(".line");
+
     // --- Restore table rows from localStorage ---
     function restoreTable() {
         const savedRows = JSON.parse(localStorage.getItem("rawDataTable") || "[]");
@@ -46,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let value = data[key];
             if (key === "SOFTWARE_STATE") {
                 updatePhaseDiv(value);
+                updateProgress(value);
             } else if (key === "ERROR_FLAGS") {
                 updateErrorFlags(value);
             } else {
@@ -104,10 +108,10 @@ document.addEventListener("DOMContentLoaded", function () {
             "VOLTAGE": "voltage",
             "PRESSURE": "pressure",
             "HUMIDITY": "humidity",
-            "ERROR_FLAGS": "error",   // ⚠ Make sure error flag grid has buttons with IDs (see updateErrorFlags)
+            "ERROR_FLAGS": "error",   
             'XBEE_RSSI': 'xbee_rssi',
             'LORA_RSSI': 'rssi',
-            'SOFTWARE_STATE': 'state', // ⚠ Maps to phase display divs (see updatePhaseDiv)
+            'SOFTWARE_STATE': 'state'
         };
         return idMap[csvKey.trim()] || null;
     }
@@ -115,43 +119,46 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- Update Phase Div ---
     function updatePhaseDiv(stateValue) {
         document.querySelectorAll('.phase').forEach(phase => {
-            phase.className = 'phase';
+            phase.classList.remove("active");
         });
 
-        // ⚠ REQUIRED IDs for phases in your HTML
-        // <div id="launch-phase" class="phase"></div>
-        // <div id="ascent-phase" class="phase"></div>
-        // <div id="coast-phase" class="phase"></div>
-        // <div id="descent-phase" class="phase"></div>
-        // <div id="recovery-phase" class="phase"></div>
         const phaseMap = {
-            "1": "launch-phase",
-            "2": "ascent-phase",
-            "3": "coast-phase",
-            "4": "descent-phase",
-            "5": "recovery-phase"
+            "1": "launch-phase",   // BOOT
+            "2": "ascent-phase",   // IDLE
+            "3": "coast-phase",    // ASCENT
+            "4": "descent-phase",  // DESCENT
+            "5": "recovery-phase"  // RECOVERY
         };
 
         const phaseId = phaseMap[stateValue];
         if (phaseId) {
             const targetDiv = document.getElementById(phaseId);
-            if (targetDiv) targetDiv.className = 'phase active';
+            if (targetDiv) targetDiv.classList.add("active");
+        }
+    }
+
+    // --- Update Progress Steps + Lines ---
+    function updateProgress(stateValue) {
+        steps.forEach((step, index) => {
+            step.classList.remove("active");
+            if (lines[index]) lines[index].classList.remove("active");
+        });
+
+        const phaseMap = {
+            "1": 0, "2": 1, "3": 2, "4": 3, "5": 4
+        };
+
+        const stepIndex = phaseMap[stateValue];
+        if (stepIndex === undefined) return;
+
+        for (let i = 0; i <= stepIndex; i++) {
+            steps[i].classList.add("active");
+            if (lines[i]) lines[i].classList.add("active");
         }
     }
 
     // --- Error Flag Handler ---
     function updateErrorFlags(hexValue) {
-        // ⚠ REQUIRED IDs for error flags in your HTML
-        // <button id="e-batt" class="btn"></button>
-        // <button id="e-comms-loss" class="btn"></button>
-        // <button id="e-comms-del" class="btn"></button>
-        // <button id="e-mem" class="btn"></button>
-        // <button id="e-sd" class="btn"></button>
-        // <button id="e-flash" class="btn"></button>
-        // <button id="e-para" class="btn"></button>
-        // <button id="e-fins" class="btn"></button>
-        // <button id="e-cs" class="btn"></button>
-        // <button id="e-none" class="btn"></button>  <-- special "no error" state
         const errorBitMap = {
             0: "e_fin",
             1: "e_mem",
@@ -192,47 +199,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (clockElement) clockElement.textContent = timeString;
     }
 
-    // --- Countdown + Mission Timer ---
-   /* function setupTimer() {
-        const timerEl = document.querySelector('.countdown');
-        const missionTimeEl = document.getElementById('countdown');
-        const startButton = document.getElementById('start');
-
-        let counter = 10; 
-        let countingUp = false;
-        let missionCounter = 0;
-        let timerInterval = null;
-        let missionInterval = null;
-
-        startButton.addEventListener('click', () => {
-            if (timerInterval) return; 
-            timerInterval = setInterval(() => {
-                const minutes = String(Math.floor(counter / 60)).padStart(2, '0');
-                const seconds = String(counter % 60).padStart(2, '0');
-                const timeDisplay = ${minutes}:${seconds};
-                timerEl.innerHTML = <span>T${countingUp ? ' +' : ' -'} </span>${timeDisplay};
-
-                if (!countingUp) {
-                    counter--;
-                    if (counter < 0) {
-                        countingUp = true;
-                        counter = 0;
-                        missionCounter = 0;
-                        missionInterval = setInterval(() => {
-                            const h = String(Math.floor(missionCounter / 3600)).padStart(2, '0');
-                            const m = String(Math.floor((missionCounter % 3600) / 60)).padStart(2, '0');
-                            const s = String(missionCounter % 60).padStart(2, '0');
-                            missionTimeEl.textContent = ${h}:${m}:${s};
-                            missionCounter++;
-                        }, 1000);
-                    }
-                } else {
-                    counter++;
-                }
-            }, 1000);
-        });
-    }
-*/
     // --- Add Row to Raw Data Table ---
     function addNewRowToTable(rowData, saveToStorage = true) {
         const tableBody = document.getElementById("table-body");
@@ -252,6 +218,5 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- START EVERYTHING ---
     restoreTable();
     loadCSVData();
-    setupTimer();
     setInterval(updateClock, 1000);
 });

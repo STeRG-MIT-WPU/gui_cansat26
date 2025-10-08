@@ -1,0 +1,249 @@
+body{
+    background: radial-gradient(ellipse,#000000 0%, #2B2A2A 100%);;
+    margin: 0;
+    padding: 0;
+    height:100vh;
+}
+.navbar{
+    display: flex;
+    padding: 5px;
+}
+
+.navbar-logo{
+    position: absolute;
+}
+
+.precheck-name{
+    font-family: 'orbitron', sans-serif  ;
+    color: #ffffff;
+    font-weight: bolder;
+    font-size:  34px;
+    position: relative;
+    left: 170px;
+    top: 12px;
+    text-shadow:0 0 1em rgb(255, 255, 255,50%),0 0 0.2em rgb(255, 255, 255, 50%);
+}
+
+.team-id{
+    font-family: 'orbitron', sans-serif  ;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 300;
+    position: relative;
+    left: 40px; 
+}
+
+.timer-display{
+    font-family: 'orbitron', sans-serif  ;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;  
+    position: relative;
+    left: 350px;
+}
+
+.logo{
+    position:relative;
+    left: 400px;
+    top: -5px;
+}
+
+.nav-divider {
+    width: 85%;
+    margin: 10px auto 25px auto; 
+    height: 3px;
+    background: radial-gradient(ellipse,#10EAF0 0%, #000000 100%);
+    position: absolute;
+    top: 75px;
+    left: 90px;
+}
+
+.main-grid {
+    display:grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-areas:
+    "left midddle right";
+    gap: var(--gap-size);
+    position:relative;
+    margin-top: 1rem;
+}
+.left-panel {
+    gap: 1rem;
+    grid-area: left;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    margin-left:4rem;
+    text-align:center;
+    gap: 5rem;
+    margin-top:3rem;
+}
+
+.checks-label {
+    font-family: 'Anonymous Pro';
+    font-size:30px;
+    font-weight: bold;
+    white-space: nowrap;
+    min-width: 250px;
+    background:transparent;
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+    border:none;
+    cursor:pointer;
+    color: #ffffff;
+}
+
+.check-value {
+    color:#686363;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.right_panel {
+    grid-area: right;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    gap: 1rem;
+    margin-right:4rem;
+    text-align:center;
+    top:8rem;
+    gap: 5rem;
+    margin-top:3rem;
+}
+.Cansat-conatainer {
+    display:flex;
+    position:relative;
+    flex-direction:column;
+    margin-left: 650px;
+    position:absolute;
+}
+
+#cansat{
+    position:relative;
+    width: 300px;
+    height: 400px;
+    max-width: 100%;
+    z-index: 1;
+   
+    top: 50px
+}
+
+.loading-bar {
+  position: absolute;
+  width: 370px;
+  height: 370px;
+  border: 20px solid rgba(0, 200, 215, 0.3);
+  border-top-color: #00C8D7; /* Changed for simplicity */
+  border-radius: 50%;
+  animation: spin 3s linear infinite;
+  top: 20px;
+  left: -60px;
+  /* top and z-index are fine, but are not needed if centered in a container */
+}
+
+/* Corrected pseudo-element for the glow */
+.loading-bar::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 100%;
+  height: 100%;
+  border: 20px solid transparent;
+  border-top-color: #00C8D7; /* Changed for simplicity */
+  border-radius: 50%;
+  filter: drop-shadow(0 0 10px rgba(0, 200, 215, 0.9))
+          drop-shadow(0 0 40px rgba(0, 200, 215, 0.7))
+          drop-shadow(0 0 20px rgba(0, 200, 215, 0.5));
+}
+
+/* Spinning animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.initiate-button{
+    height: 50px;
+    width: 320px;
+    font-family: 'orbitron', sans-serif  ;
+    font-size: 20px;
+    font-weight: 600;
+    cursor:pointer;
+    position: absolute;
+    bottom: -150px;
+    border-radius: 13px;
+    background-color: #00C8D7;
+    color: #000000;
+    border: 1px solid #00C8D7;
+}
+
+.dashboard-footer {
+  display: flex;
+  flex-direction: row;
+}
+
+.sensor-calibration-title {
+  font-family: 'Anonymous Pro';
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.section-divider-left,
+.section-divider-right {
+  margin: 10px auto 25px auto;
+  height: 3px;
+  background: radial-gradient(ellipse, #ffffff 0%, #000000 100%);
+}
+
+.sensor-calibration-block-left {
+  position: relative;
+  bottom: -60px;
+  left: 75px;
+  margin: 0.5rem auto 1rem auto;
+}
+
+.sensor-calibration-block-right {
+  position: relative;
+  right: 25px;
+  bottom: -60px;
+  margin: 0.5rem auto 1rem auto;
+}
+
+.sensor-list {
+  list-style-type: none; 
+  padding: 0;            
+  font-family: 'Josefin Sans', sans-serif; 
+  color: #ffffff;
+  font-size: larger;       
+}
+
+.sensor-list input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none; /* remove default */
+  width: 16px;
+  height: 16px;
+  border: 2px solid #00C8D7;
+  border-radius: 3px;
+  margin-right: 8px;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle; /* Aligns checkbox better with text */
+}
+
+.sensor-list input[type="checkbox"]:checked {
+  background-color: #00C8D7;
+}
+
+.sensor-list input[type="checkbox"]:checked::after {
+  content: "✔";
+  font-size: 12px;
+  color: black;
+  position: absolute;
+  top: -2px;
+  left: 2px;
+}

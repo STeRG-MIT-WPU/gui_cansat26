@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Status</title>
+<style>
+    /* Basic body styling for the dark theme */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #1a1a1a;
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+}
+
+/* Main container for the list */
+.sensor-list {
+    background-color: #2c2c2c;
+    padding: 20px 25px;
+    border-radius: 8px;
+    width: 280px;
+    border: 1px solid #444;
+}
+
+/* Individual row styling */
+.sensor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.sensor-item:last-child {
+    margin-bottom: 0;
+}
+
+.sensor-item label {
+    cursor: pointer;
+}
+
+/* Container for the custom checkbox */
+.custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+/* Hide the default browser checkbox */
+.custom-checkbox input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    cursor: pointer;
+}
+
+/* The custom checkbox border */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 22px;
+    width: 22px;
+    background-color: transparent;
+    border: 2px solid #00c8d7; /* The bright cyan color */
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+/* Create the checkmark symbol using a pseudo-element */
+/* This is hidden by default */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid #00c8d7;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+/* Show the checkmark when the hidden checkbox is checked */
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+</style>    
+</head>
+<body>
+
+<div class="sensor-list">
+    <div class="sensor-item">
+        <label for="bno055">BNO055</label>
+        <div class="custom-checkbox">
+            <input type="checkbox" id="bno055" checked>
+            <span class="checkmark"></span>
+        </div>
+    </div>
+
+    <div class="sensor-item">
+        <label for="bme280">BME280</label>
+        <div class="custom-checkbox">
+            <input type="checkbox" id="bme280" checked>
+            <span class="checkmark"></span>
+        </div>
+    </div>
+
+    <div class="sensor-item">
+        <label for="icm20948">ICM20948</label>
+        <div class="custom-checkbox">
+            <input type="checkbox" id="icm20948" checked>
+            <span class="checkmark"></span>
+        </div>
+    </div>
+
+    <div class="sensor-item">
+        <label for="veml6030">VEML6030</label>
+        <div class="custom-checkbox">
+            <input type="checkbox" id="veml6030" checked>
+            <span class="checkmark"></span>
+        </div>
+    </div>
+
+    <div class="sensor-item">
+        <label for="quectel">Quectel L89</label>
+        <div class="custom-checkbox">
+            <input type="checkbox" id="quectel" checked>
+            <span class="checkmark"></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
