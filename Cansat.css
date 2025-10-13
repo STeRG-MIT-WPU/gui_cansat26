@@ -131,7 +131,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{
     position: relative;
     left: 170px;
     top: -24px;
-    font-family: 'roboto mono', monospace;
+    font-family: 'josefin sans', sans-serif; 
 }
 
 .card-header{
@@ -320,10 +320,9 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{
 
 .error-title {
     font-family: 'Space Grotesk', sans-serif; 
-    font-size: 18px;
+    font-size: 22px;
     text-align: center;
     color: #ffffff;
-    letter-spacing: 1.5px;
     position: relative;
     padding-bottom: 15px;
     top: 10px;
@@ -354,7 +353,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{
     color: #e0e0e0;
     padding: 12px ; 
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     text-align: center; /* Ensure text is centered */
@@ -520,7 +519,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{
     font-weight: bolder;
     position: relative;
     top: -27px;
-    left: 40px;
+    left: 38px;
 }
 
 .label{
@@ -592,11 +591,19 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{
     margin-top: 5px;
 }
 
-.control-button svg:hover{
-      color: cyan;
-       transform: translateY(-3px);
+.control-button .label a{
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 5px;
 }
-
+/*.control-button svg:hover{
+     box-shadow: 0 0 8px cyan, 0 0 15px cyan, 0 0 20px cyan;
+}
+*/
 .progress-container {
   display: flex; 
   width: 400px;

@@ -7,7 +7,7 @@ import time
 # CONFIGURATION
 # ==============================
 TEAM_ID = "035"   # Change to "035" for CanSat
-PORT = "COM4"    # Update with your COM port
+PORT = "COM11"    # Update with your COM port
 BAUDRATE = 115200
 
 # CSV files
@@ -88,7 +88,7 @@ def telemetry_task(ser):
             # Checksum validation
             received_checksum = fields[-3]
             # calculated_checksum = str(calculate_checksum(",".join(fields[:-1]))) # Disable checksum for CanSat
-            if received_checksum != "00":  # Disable checksum for CanSat
+            if received_checksum != "c":  # Disable checksum for CanSat
                 print("[WARNING] Checksum mismatch:", line)
                 print("Received :", received_checksum, "Calculated : 00")
                 send_ack(ser, pkt_count, 0)

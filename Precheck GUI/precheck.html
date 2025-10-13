@@ -62,7 +62,7 @@
          <div class="Cansat-conatainer">
            <div class="loading-bar" id="loading_circle"></div>  
            <!--<img src="Untitled-removebg-preview.png" alt="Cansat-modal" id=cansat height="450px" width="auto">-->
-         <div id="cansat"><iframe src="precheck_model.html" width="100%" height="100%" ></iframe></div>
+         <div id="cansat"><iframe src="precheck_model.html" width="100%" height="100%" outline="none" style="border:none;"></iframe></div>
              <button class="initiate-button" id="initiate_button">Initiate Mission Sequence</button>
         </div>
 
@@ -114,7 +114,9 @@
     </div>
   </div>
 
-
+ <div class="command-box">
+    <input id="commandInput" type="text" placeholder="ENTER COMMAND..." autocomplete="off">
+</div>
 
     <script src="precheck.js"></script>  
 </body>

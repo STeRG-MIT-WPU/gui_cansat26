@@ -1,0 +1,24 @@
+{
+  "name": "cansat-gui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amey1475/stergsoftware.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amey1475/stergsoftware/issues"
+  },
+  "homepage": "https://github.com/amey1475/stergsoftware#readme",
+  "devDependencies": {
+    "electron": "^38.2.2"
+  }
+}

@@ -1,0 +1,105 @@
+body{
+    background: radial-gradient(ellipse,#000000 0%, #2B2A2A 100%);;
+    margin: 0;
+    padding: 0;
+    height:100vh;
+    overflow: auto;
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,body::-webkit-scrollbar{
+    display: none;
+}
+
+.navbar{
+    display: flex;
+    padding: 5px;    
+}
+
+.team-id{
+   position: relative;
+   left: 25px; 
+   color: #ffffff;
+   font-family: 'orbitron', sans-serif  ;
+   font-weight: 400px;
+   font-size: 14px;
+}
+
+.team-name{
+    font-family: 'orbitron', sans-serif  ;
+    color: #ffffff;
+    font-weight: 400px;
+    font-size: 20px;
+    position: relative;
+    left: 100px;
+    top: -22px;
+}
+
+
+.timer-display{
+    position: relative;
+    left: 300px;
+    font-size: 22px;
+    top: -14px;
+    color: #ffffff;
+   font-family: 'orbitron', sans-serif ;
+   font-weight: 400px;
+    
+}
+
+.battery-container {
+    width: 80px;
+    height: 25px;
+    border: 5px solid #333;
+    border-radius: 10px;
+    position: relative;
+    left: 210px;
+    top: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.battery-container::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: -13px;
+    width: 5px;
+    height: 15px;
+    background: #333;
+    border-radius: 0 5px 5px 0;
+}
+
+#battery-level {
+    height: 100%;
+    background-color: #4CAF50; /* Start with green */
+    border-radius: 5px;
+    width: 0%; /* Initial width, will be set by JS */
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+#battery-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #333;
+    font-size: 11px;
+    font-weight: 800;
+    text-shadow: 1px 1px 3px rgb(36, 33, 33);
+}
+
+.logo{
+    position: relative;
+    left: 425px;
+    padding: 2px;
+    top: -10px;
+}
+
+.nav-divider {
+    width: 80%;
+    margin: 10px auto 25px auto; 
+    height: 3px;
+    background: radial-gradient(ellipse,#10EAF0 0%, #000000 100%);
+    position: relative;
+    top: -45px;   
+}

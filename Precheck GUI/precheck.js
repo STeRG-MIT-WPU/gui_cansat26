@@ -8,12 +8,12 @@ buttons.forEach(btn => {
     if (isCyan) {
       // Red glow
       btn.style.color = "red";
-      btn.style.textShadow = "0 0 10px red, 0 0 20px red, 0 0 30px red";
+      btn.style.textShadow = "  red";
       isCyan = false;
     } else {
       // Cyan glow
       btn.style.color = "#00C8D7";
-      btn.style.textShadow = "0 0 10px #00C8D7, 0 0 20px #00C8D7, 0 0 30px #00C8D7";
+      btn.style.textShadow = "   #00C8D7";
       isCyan = true;
     }
   });

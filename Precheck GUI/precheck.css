@@ -80,7 +80,7 @@ body{
 }
 
 .checks-label {
-    font-family: 'Anonymous Pro';
+    font-family: 'Josefin Sans', sans-serif;;
     font-size:30px;
     font-weight: bold;
     white-space: nowrap;
@@ -120,7 +120,7 @@ body{
 #cansat{
     position:relative;
     width: 300px;
-    height: 400px;
+    height: 500px;
     max-width: 100%;
     z-index: 1;
    
@@ -174,11 +174,12 @@ body{
     font-weight: 600;
     cursor:pointer;
     position: absolute;
-    bottom: -150px;
+    bottom: -260px;
     border-radius: 13px;
     background-color: #00C8D7;
     color: #000000;
     border: 1px solid #00C8D7;
+    box-shadow: 0 0 10px #00C8D7;
 }
 
 .dashboard-footer {
@@ -187,7 +188,7 @@ body{
 }
 
 .sensor-calibration-title {
-  font-family: 'Anonymous Pro';
+  font-family: 'Josefin Sans', sans-serif; 
   font-size: 24px;
   font-weight: 600;
   color: #ffffff;
@@ -201,49 +202,79 @@ body{
 }
 
 .sensor-calibration-block-left {
-  position: relative;
-  bottom: -60px;
-  left: 75px;
-  margin: 0.5rem auto 1rem auto;
+    position: relative;
+    bottom: -60px;
+    left: 30px; /* Increased from 50px */
+    margin: 0.5rem auto 1rem auto;
 }
 
 .sensor-calibration-block-right {
-  position: relative;
-  right: 25px;
-  bottom: -60px;
-  margin: 0.5rem auto 1rem auto;
+    position: relative;
+    right: -30px; /* Increased from 20px */
+    bottom: -60px;
+    margin: 0.5rem auto 1rem auto;
 }
 
 .sensor-list {
   list-style-type: none; 
-  padding: 0;            
+  padding: 10px;            
   font-family: 'Josefin Sans', sans-serif; 
   color: #ffffff;
-  font-size: larger;       
+  font-size: large;
 }
 
 .sensor-list input[type="checkbox"] {
-  -webkit-appearance: none;
-  appearance: none; /* remove default */
-  width: 16px;
-  height: 16px;
-  border: 2px solid #00C8D7;
-  border-radius: 3px;
-  margin-right: 8px;
-  cursor: pointer;
-  position: relative;
-  vertical-align: middle; /* Aligns checkbox better with text */
+    -webkit-appearance: none;
+    appearance: none; /* remove default */
+    width: 16px;
+    height: 16px;
+    border: 2px solid #00C8D7;
+    border-radius: 3px;
+    margin-right: 120px;
+    cursor: pointer;
+    position: relative;
+    align-items: center; /* Aligns checkbox better with text */
+  
 }
 
 .sensor-list input[type="checkbox"]:checked {
-  background-color: #00C8D7;
+    background-color: #00C8D7;
 }
 
 .sensor-list input[type="checkbox"]:checked::after {
-  content: "✔";
-  font-size: 12px;
-  color: black;
-  position: absolute;
-  top: -2px;
-  left: 2px;
+    content: "✔";
+    font-size: 12px;
+    color: black;
+    position: absolute;
+    top: -2px;
+    left: 2px;
+}
+
+.command-box {
+  background-color: rgba(0, 0, 0, 25%)  ;
+  padding: 5px 12px;
+  border-radius: 8px;
+  position: relative;
+  top: 40px;
+  left: 380px;
+  width: 850px;
+  height: 40px;
+  box-shadow: 0 0 2px #10EAF0, 0 0 5px #10EAF0;
+}
+
+.command-box input {
+    background: transparent;
+    border: none;
+    color: #1ed83a;
+    font-weight: bold;
+    font-size: 14px;
+    width: 100%;
+    height: 50px;
+    text-transform: uppercase;
+    outline: none;
+}
+
+.command-box input::placeholder {
+    color: #1ED83A;
+    letter-spacing: 1px;
 }

@@ -35,7 +35,7 @@
         0.1,
         100
       );
-      camera.position.set(0, 6, -11);
+      camera.position.set(0, 0, -20);
       camera.lookAt(0, 0, 0);
 
       // Renderer with transparent background
@@ -62,7 +62,7 @@
           const size = new THREE.Vector3();
           box.getSize(size);
           const maxDim = Math.max(size.x, size.y, size.z);
-          const desiredSize = 6;
+          const desiredSize = 12;
           rocket.scale.setScalar(desiredSize / maxDim);
           rocket.rotation.x = Math.PI / 2; // Align rocket vertically
 
@@ -70,6 +70,7 @@
           const center = new THREE.Vector3();
           box.getCenter(center);
           rocket.position.sub(center); // Center the model
+          rocket.position.y -= 7 ; //adjust the height
 
           scene.add(rocket);
         },

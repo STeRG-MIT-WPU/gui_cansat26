@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let lastData = {};
     let lastRow = null;
     let isDataAvailable = true;
-    const timer = 1000; // 1 second refresh
+    const timer = 0; // 1 second refresh
 
     const steps = document.querySelectorAll(".progress-step");
     const lines = document.querySelectorAll(".line");
