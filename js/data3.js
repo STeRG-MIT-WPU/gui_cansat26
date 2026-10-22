@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const csvFilePath = "data.csv";  // Your CSV file
+    const csvFilePath = CSV_PATH;    // data_<src>.csv, see js/source.js
     let lastData = {};
     let lastRow = null;
+    let lastRx = 0;
     let isDataAvailable = true;
-    const timer = 0; // 1 second refresh
+    const timer = 100; // ms between polls (MQTT link is 15 Hz)
 
     const steps = document.querySelectorAll(".progress-step");
     const lines = document.querySelectorAll(".line");
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             if (JSON.stringify(latestRow) !== JSON.stringify(lastRow)) {
                                 requestAnimationFrame(() => updateDashboard(latestRow));
                                 lastRow = latestRow;
+                                lastRx = Date.now();
                                 addNewRowToTable(latestRow);
                             }
                         } else if (isDataAvailable) {
@@ -65,7 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         lastData = { ...data };
-        updateBatteryFromVoltage(parseFloat(data["VOLTAGE"]));
+        updateBattery(parseFloat(data["BATTERY"]));
+        updateMissionClock(parseFloat(data["MISSION_TIME"]));
     }
 
     function updateValue(id, newValue) {
@@ -75,24 +78,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function updateBatteryFromVoltage(voltage) {
-        const BATTERY_MIN_VOLTAGE = 2.5;
-        const BATTERY_MAX_VOLTAGE = 6.5;
+    // BATT% field of the packet (INA226 estimate on the FC)
+    function updateBattery(percent) {
+        if (isNaN(percent)) return;
+        const level = document.getElementById('battery-level');
+        const text = document.getElementById('battery-percentage');
+        const p = Math.max(0, Math.min(100, percent));
+        if (level) {
+            level.style.width = p + '%';
+            level.style.backgroundColor = p < 20 ? '#f44336' : p < 50 ? '#ff9800' : '#4CAF50';
+        }
+        if (text) text.textContent = p.toFixed(0) + '%';
+    }
 
-        const clampedVoltage = Math.max(BATTERY_MIN_VOLTAGE, Math.min(voltage, BATTERY_MAX_VOLTAGE));
-        const batteryPercent = ((clampedVoltage - BATTERY_MIN_VOLTAGE) / (BATTERY_MAX_VOLTAGE - BATTERY_MIN_VOLTAGE)) * 100;
-        const roundedPercent = Math.round(batteryPercent * 10) / 10;
-
-        const batteryFill = document.getElementById('battery-fill');
-        const batteryText = document.getElementById('battery-text');
-        if (batteryFill) batteryFill.style.width = roundedPercent + '%';
-        if (batteryText) batteryText.innerText = roundedPercent + '%';
+    // TIME field of the packet (mission seconds) as T+hh:mm:ss on the navbar
+    function updateMissionClock(seconds) {
+        const el = document.querySelector('#timer h3');
+        if (!el || isNaN(seconds)) return;
+        const s = Math.floor(seconds), pad = n => String(n).padStart(2, '0');
+        el.textContent = `T+${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`;
     }
 
     // --- CSV Key → Element ID Map ---
     function getElementId(csvKey) {
         const idMap = {
-            "TEAM_ID": "teamid",
+            "TEAM_ID": ["teamid", "teamid-nav"],
             "MISSION_TIME": "time",
             "PACKET_COUNT": "packets", 
             "AX": "AX", "AY": "AY", "AZ": "AZ",
@@ -122,12 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
             phase.classList.remove("active");
         });
 
-        const phaseMap = {
-            "1": "launch-phase",   // BOOT
-            "2": "ascent-phase",   // IDLE
-            "3": "coast-phase",    // ASCENT
-            "4": "descent-phase",  // DESCENT
-            "5": "recovery-phase"  // RECOVERY
+        const phaseMap = {          // state_t in cansat26_fw state_machine_var.h
+            "0": "launch-phase",    // BOOT
+            "1": "ascent-phase",    // STANDBY (shown as IDLE)
+            "2": "coast-phase",     // ASCENT
+            "3": "descent-phase",   // DESCENT
+            "4": "recovery-phase"   // RECOVERY
         };
 
         const phaseId = phaseMap[stateValue];
@@ -145,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const phaseMap = {
-            "1": 0, "2": 1, "3": 2, "4": 3, "5": 4
+            "0": 0, "1": 1, "2": 2, "3": 3, "4": 4
         };
 
         const stepIndex = phaseMap[stateValue];
@@ -158,37 +168,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Error Flag Handler ---
+    // EFLAG is printed with %X from pd.e_flag (cansat26_fw, FC branch). Bit numbers from variables.h:
+    const ERROR_FLAGS = ["e_none", "e_low_bat", "e_comm_los", "e_comm_delay", "e_para", "e_sd_not_found",
+                         "e_stall", "e_mount", "e_full", "e_flash", "e_payload"];
+
+    function decodeErrorFlags(hexValue) {
+        let v = parseInt(hexValue, 16) || 0;
+        const bits = new Set();
+        // The FC writes pd.e_flag two ways: `|= E_FLASH` (bit mask 0x200, persist.c failure) and
+        // `= n` with n the bit NUMBER (1 low batt, 4 para, 5 sd init, 6 stall, 7 mount, 8 full).
+        if (v & 0x200) { bits.add(9); v &= ~0x200; }
+        if (v > 0 && v <= 10) bits.add(v);                       // bit number form
+        else for (let i = 0; i < ERROR_FLAGS.length; i++) if (v >> i & 1) bits.add(i);   // mask form
+        return bits;
+    }
+
     function updateErrorFlags(hexValue) {
-        const errorBitMap = {
-            0: "e_fin",
-            1: "e_mem",
-            2: "e_cs",
-            3: "e_flash",
-            4: "e_batt",
-            5: "e_comms_loss",
-            6: "e_sd",
-            7: "e_para",
-            8: "e_comms_del"
-        };
-
-        document.querySelectorAll(".error-grid .btn").forEach(btn => {
-            btn.className = "btn";
+        const bits = decodeErrorFlags(hexValue);
+        ERROR_FLAGS.forEach((id, i) => {
+            const el = document.getElementById(id);
+            if (el) el.className = bits.has(i) ? "error-button-abort" : "error-button";
         });
-
-        let binary = parseInt(hexValue, 16).toString(2).padStart(9, '0');
-
-        if (!binary.includes('1')) {
-            const noneBtn = document.getElementById("e-none");
-            if (noneBtn) noneBtn.className = "error-button active";
-            return;
-        }
-
-        for (let i = 0; i < 9; i++) {
-            if (binary[binary.length - 1 - i] === '1') {
-                const el = document.getElementById(errorBitMap[i]);
-                if (el) el.className = "error-button-abort";
-            }
-        }
+        const none = document.getElementById("e_none");
+        if (none && bits.size === 0) none.className = "error-button active";
+        const raw = document.getElementById("e_raw");
+        if (raw) raw.textContent = "EFLAG 0x" + String(hexValue).toUpperCase();
     }
 
     // --- Clock ---
@@ -202,6 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- Add Row to Raw Data Table ---
     function addNewRowToTable(rowData, saveToStorage = true) {
         const tableBody = document.getElementById("table-body");
+        if (!tableBody) return;
         const newRow = tableBody.insertRow(0);
         Object.values(rowData).forEach(value => {
             const cell = newRow.insertCell();
@@ -214,6 +219,22 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem("rawDataTable", JSON.stringify(existing.slice(-100)));
         }
     }
+
+    // --- Link switcher: mark the active link, red dot when no packet for 3 s ---
+    document.title = "CANSAT GUI - " + SRC.toUpperCase();
+    document.querySelector(`.source-switch a[data-src="${SRC}"]`)?.classList.add("active");
+    setInterval(() => document.body.classList.toggle("link-stale", Date.now() - lastRx > 3000), 1000);
+
+    // --- Command box: Enter sends the line out on the selected link (server.py /cmd) ---
+    const cmdInput = document.getElementById("commandInput");
+    cmdInput?.addEventListener("keydown", async e => {
+        const cmd = cmdInput.value.trim();
+        if (e.key !== "Enter" || !cmd) return;
+        cmdInput.value = "";
+        const r = await fetch("/cmd", { method: "POST", headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ src: SRC, cmd }) }).catch(() => ({ ok: false }));
+        cmdInput.placeholder = (r.ok ? "SENT: " : "FAILED: ") + cmd;
+    });
 
     // --- START EVERYTHING ---
     restoreTable();

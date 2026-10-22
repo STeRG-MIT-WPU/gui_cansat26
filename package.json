@@ -1,23 +1,24 @@
 {
   "name": "cansat-gui",
   "version": "1.0.0",
-  "description": "",
+  "description": "CanSat 2026 ground station GUI (XBee / LoRa / MQTT)",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "python server.py",
+    "start:electron": "electron ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/amey1475/stergsoftware.git"
+    "url": "git+https://github.com/STeRG-MIT-WPU/gui_cansat26.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/amey1475/stergsoftware/issues"
+    "url": "https://github.com/STeRG-MIT-WPU/gui_cansat26/issues"
   },
-  "homepage": "https://github.com/amey1475/stergsoftware#readme",
+  "homepage": "https://github.com/STeRG-MIT-WPU/gui_cansat26#readme",
   "devDependencies": {
     "electron": "^38.2.2"
   }

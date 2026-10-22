@@ -1,0 +1,7 @@
+__pycache__/
+logs/
+images/
+data_xbee.csv
+data_lora.csv
+data_mqtt.csv
+node_modules/

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const csvFilePath = 'data.csv';
+    const csvFilePath = CSV_PATH;
     const updateInterval = 1000; // 1 second refresh
     let lastPacketCount = 0; // Track last processed packet
 
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         altChart.data.datasets[0].data.push(row.ALTITUDE);
 
                         velChart.data.labels.push(packetCount);
-                        velChart.data.datasets[0].data.push(row.Velocity);
+                        velChart.data.datasets[0].data.push(row.VELOCITY);
 
                         tempChart.data.labels.push(packetCount);
                         tempChart.data.datasets[0].data.push(row.TEMPERATURE);

@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="Cansat.css">
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="js/source.js"></script>
     <title>CANSAT GUI</title>
 </head>
 <body>
@@ -22,7 +23,7 @@
             </div>
 
             <div class="team-id">    
-                <h2>TEAM ID- 2024ASI-035</h2>
+                <h2>TEAM ID- <span id="teamid-nav">---</span></h2>
             </div>
 
             <div class="team-name"> 
@@ -31,12 +32,19 @@
 
             <div class="battery-container">
               <div id="battery-level"></div>
-                <span id="battery-percentage">--%</span>
+                <span id="battery-percentage">---</span>
             </div>
 
             <div class="timer-display">
-                <div  id="timer"><h3>T-00:00:00</h3></div>
+                <div  id="timer"><h3>T+--:--:--</h3></div>
             </div> 
+
+      <!-- telemetry link switcher: each link is its own screen (?src=), open several tabs for side by side -->
+      <div class="source-switch">
+        <a href="?src=xbee" data-src="xbee">XBEE</a>
+        <a href="?src=lora" data-src="lora">LORA</a>
+        <a href="?src=mqtt" data-src="mqtt">MQTT</a>
+      </div>
 
             <div class="logo">
                <img src="Image\Sterg - 1.png" width="auto" height="75">    
@@ -46,7 +54,7 @@
 
  <div class="nav-divider"></div>
 
-  <!-- column 1 -->   
+  <!-- column 1 -->
 
  <div class="card">
         <div class="card-header">METADATA </div>
@@ -54,7 +62,7 @@
            <div class="data-grid">
                 <div class="data-item">
                    <div class="data-label">Team ID</div>
-                   <div class="data-value"><span id="team-id">035</span></div>
+                   <div class="data-value"><span id="teamid">---</span></div>
                  </div>
                  <div class="nav_divider1"></div>
 
@@ -124,19 +132,19 @@
              <div class="data-grid">
                  <div class="data-items">
                     <div class="data-label">X</div>
-                    <div class="data-value"><span id="MX">---µT</span></div>
+                    <div class="data-value"><span id="MX">---</span> µT</div>
                  </div>
                    <div class="nav_divider5"></div>
 
                  <div class="data-item">
                    <div class="data-label">Y</div>
-                   <div class="data-value"><span id="MY">--- µT</span></div>
+                   <div class="data-value"><span id="MY">---</span> µT</div>
                 </div>
                  <div class="nav_divider6"></div>
 
                 <div class="data-item">
                    <div class="data-label">Z</div>
-                   <div class="data-value"><span id="MZ">--- µT</span></div>
+                   <div class="data-value"><span id="MZ">---</span> µT</div>
              </div>
         </div>
 
@@ -151,18 +159,18 @@
              <div class="data-grid">
                  <div class="data-items">
                     <div class="data-label">LATITUDE</div>
-                    <div class="data-value"><span id="lat">---deg</span> deg</div>
+                    <div class="data-value"><span id="lat">---</span> deg</div>
                  </div>
                    <div class="nav_divider9"></div>
                    
                  <div class="data-item">
                    <div class="data-label">LONGITUDE</div>
-                   <div class="data-value"><span id="lng">---deg</span> deg</div>
+                   <div class="data-value"><span id="lng">---</span> deg</div>
                 </div>
                  <div class="nav_divider10"></div>
                 <div class="data-item">
                    <div class="data-label">ALTITUDE</div>
-                   <div class="data-value"><span id="altitude">---m</span> m</div>
+                   <div class="data-value"><span id="altitude">---</span> m</div>
                </div>
                <div class="nav_divider11"></div>
                  <div class="data-item">
@@ -181,15 +189,19 @@
     <div class="error-flags-container">
         <h2 class="error-title">ERROR FLAGS</h2>
         <div class="error-grid">
-            <div class="error-button" id="e_fin">E_FIN</div>
-            <div class="error-button" id="e_mem">E_MEM</div>
-            <div class="error-button" id="e_cs">E_CS</div>
-            <div class="error-button" id="e_flash">E_FLASH</div>
-            <div class="error-button" id="e_batt">E_BATT</div>
-            <div class="error-button" id="e_comms_loss">E_COMMS_LOSS</div>
-            <div class="error-button" id="e_sd">E_SD</div>
+            <!-- bit order from cansat26_fw Core/Inc/variables.h (E_NONE = bit 0 ... E_PAYLOAD = bit 10) -->
+            <div class="error-button" id="e_none">E_NONE</div>
+            <div class="error-button" id="e_low_bat">E_LOW_BAT</div>
+            <div class="error-button" id="e_comm_los">E_COMM_LOS</div>
+            <div class="error-button" id="e_comm_delay">E_COMM_DELAY</div>
             <div class="error-button" id="e_para">E_PARA</div>
-            <div class="error-button" id="e_comms_del">E_COMMS_DEL</div>
+            <div class="error-button" id="e_sd_not_found">E_SD_NOT_FOUND</div>
+            <div class="error-button" id="e_stall">E_STALL</div>
+            <div class="error-button" id="e_mount">E_MOUNT</div>
+            <div class="error-button" id="e_full">E_FULL</div>
+            <div class="error-button" id="e_flash">E_FLASH</div>
+            <div class="error-button" id="e_payload">E_PAYLOAD</div>
+            <div class="error-button" id="e_raw">EFLAG ---</div>
         </div>
     </div>   
 
@@ -242,37 +254,37 @@
         <div class="data-grid-1">
         <div class="data-box">
             <span class="label">BMP TEMP</span>
-            <span class="value" id="bmp-temp">--°C</span>
+            <span class="value" id="bmp-temp">---</span>
             <span class="unit">°C</span>
         </div>
         
         <div class="data-box">
             <span class="label">PRESSURE</span>
-            <span class="value" id="pressure">--P</span>
-            <span class="unit">P</span>
+            <span class="value" id="pressure">---</span>
+            <span class="unit">hPa</span>
         </div>
         
         <div class="data-box">
             <span class="label">HUMIDITY</span>
-            <span class="value" id="humidity">--%</span>
+            <span class="value" id="humidity">---</span>
             <span class="unit">%</span>
         </div>
         
         <div class="data-box">
             <span class="label">CURRENT</span>
-            <span class="value" id="current">---mA</span>
-            <span class="unit">mA</span>
+            <span class="value" id="current">---</span>
+            <span class="unit">A</span>
         </div>
         
         <div class="data-box">
             <span class="label">LUX</span>
-            <span class="value" id="lux">102 </span>
+            <span class="value" id="lux">---</span>
             <span class="unit">Lx</span>
         </div>
 
          <div class="data-box">
             <span class="label">VOLTAGE</span>
-            <span class="value" id="voltage">---V</span>
+            <span class="value" id="voltage">---</span>
             <span class="unit">V</span>
         </div>
       </div> 
@@ -330,7 +342,7 @@
       
       <button class="control-button">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera-icon lucide-camera"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></svg>
-        <span class="label"><a href="./camera.html">CAMERA</a></span>
+        <span class="label"><a href="./camera.html" target="_blank">CAMERA</a></span>
       </button>
 
       <button class="control-button">
@@ -344,7 +356,6 @@
 
 
 <script src="js\data3.js"></script>
-<script src="js\Battery.js"></script>
 <script src="js\graph2.js"></script>
 <script src="js\3DMapsV2.js"></script>
 </body>

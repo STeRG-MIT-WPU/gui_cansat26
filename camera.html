@@ -3,40 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cansat Camera</title>
-    <link rel="stylesheet" href="camera.css">
+    <title>CANSAT GUI - CAMERA</title>
     <link rel="icon" href="Screenshot 2025-03-11 173318.png">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">                 
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Last image received on each image-carrying link (XBee serial, MQTT img topic).
+           server.py reassembles $IMG lines into images/xbee/ and images/mqtt/; /latest names the newest file. */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { font-size: calc(0.9vh + 0.25vw); }
+        body {
+            margin: 0; height: 100vh; overflow: hidden; color: #fff;
+            background: radial-gradient(ellipse, #000 0%, #2B2A2A 100%);
+            font-family: 'Orbitron', sans-serif;
+            display: grid; grid-template-rows: auto 1fr; gap: 1vh; padding: 0 1vw 1vh;
+        }
+        nav { display: flex; align-items: center; gap: 1.5vw; padding: 0.6rem 0; border-bottom: 2px solid #10EAF0; }
+        nav img { height: 5vh; }
+        nav h1 { flex: 1; margin: 0; text-align: center; font-size: clamp(14px, 1.4vw, 28px); letter-spacing: 0.1em; }
+        nav a { color: #10EAF0; text-decoration: none; font-size: 1.3rem; }
+        main { display: grid; grid-template-columns: 1fr 1fr; gap: 1vw; min-height: 0; }
+        .panel {
+            display: flex; flex-direction: column; min-height: 0;
+            background: rgba(0, 0, 0, 0.17); border: 1px solid rgba(16, 234, 240, 0.35); border-radius: 10px;
+            padding: 0.8rem 1.2rem 1rem;
+        }
+        .panel h2 { margin: 0 0 0.6rem; text-align: center; font-size: 1.8rem; color: #10EAF0; text-shadow: 0 0 5px #10EAF0; }
+        .frame { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 8px; }
+        .frame img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .frame img[src=""] { display: none; }
+        .caption { margin-top: 0.6rem; font-size: 1.2rem; text-align: center; color: #cfd8dc; min-height: 1.4em; }
+        .caption.waiting { color: #8d99ae; }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-            <div class="navbar-lago">
-                <img src="Image\IMG_6366 (1).png"  width="60px" height="60px">
-            </div>
-
-            <div class="team-id">    
-                <h2>TEAM ID- 2024ASI-035</h2>
-            </div>
-
-            <div class="team-name"> 
-              <h1>TEAM VISHWASHANTI</h1>
-            </div>
-
-            <div class="timer-display">
-                <div  id="timer"><h3>T-00:00:00</h3></div>
-            </div> 
-
-            <div class="logo">
-               <img src="Image\Sterg - 1.png" width="auto" height="75">    
-            </div>
-
-      </nav>
-
-      
- <div class="nav-divider"></div>
-
-
-
+    <nav>
+        <img src="Image/IMG_6366 (1).png" alt="">
+        <h1>CANSAT 26 - CAMERA</h1>
+        <a href="index.html">&larr; TELEMETRY</a>
+        <img src="Image/Sterg - 1.png" alt="">
+    </nav>
+    <main>
+        <section class="panel">
+            <h2>XBEE</h2>
+            <div class="frame"><img id="xbee" src="" alt="XBee image"></div>
+            <div class="caption waiting" id="xbee-cap">waiting for first image...</div>
+        </section>
+        <section class="panel">
+            <h2>MQTT</h2>
+            <div class="frame"><img id="mqtt" src="" alt="MQTT image"></div>
+            <div class="caption waiting" id="mqtt-cap">waiting for first image...</div>
+        </section>
+    </main>
+    <script>
+        const shown = {};
+        async function refresh() {
+            let latest;
+            try { latest = await (await fetch("/latest")).json(); } catch (e) { return; }
+            for (const src of ["xbee", "mqtt"]) {
+                const info = latest[src], img = document.getElementById(src), cap = document.getElementById(src + "-cap");
+                if (!info) continue;
+                const key = info.url + info.time;
+                if (shown[src] !== key) {                        // only reload the <img> when a newer file appears
+                    shown[src] = key;
+                    img.src = info.url + "?t=" + Date.now();
+                }
+                cap.className = "caption";
+                cap.textContent = `${info.url.split("/").pop()}  |  received ${info.time}  |  ${info.count} image(s) this session`;
+            }
+        }
+        refresh();
+        setInterval(refresh, 2000);
+    </script>
 </body>
 </html>

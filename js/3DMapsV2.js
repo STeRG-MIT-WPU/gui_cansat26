@@ -1,6 +1,9 @@
-const csvFilePath = "data.csv";
+// GNSS track of the CanSat. Everything shown comes from the received telemetry (GNSS_LATITUDE,
+// GNSS_LONGITUDE, GNSS_ALTITUDE): the map starts on a world view and flies to the first fix.
+const csvFilePath = CSV_PATH;
 const REFRESH_MS = 500;
-let rocketPath = [];
+let path = [];
+let flownToFix = false;
 
 const deckgl = new deck.DeckGL({
   container: 'map',
@@ -26,13 +29,7 @@ const deckgl = new deck.DeckGL({
       }
     ]
   },
-  initialViewState: {
-    longitude: 73.815226,
-    latitude: 18.518516,
-    zoom: 14,
-    pitch: 60,
-    bearing: 0
-  },
+  initialViewState: { longitude: 0, latitude: 0, zoom: 1, pitch: 0, bearing: 0 },   // no fix yet: whole world
   controller: true
 });
 
@@ -44,15 +41,14 @@ function loadCSVAndUpdate() {
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
-          rocketPath = results.data
+          path = results.data
             .map(row => {
-              let lat = parseFloat(row.GNSS_LATITUDE || row.rocket_lat);
-              let lng = parseFloat(row.GNSS_LONGITUDE || row.rocket_lng);
-              let alt = parseFloat(row.ALTITUDE || row.alt || row.Altitude);
-              if (!isNaN(lat) && !isNaN(lng) && !isNaN(alt)) {
-                return [lng, lat, alt];
-              }
-              return null;
+              const lat = parseFloat(row.GNSS_LATITUDE);
+              const lng = parseFloat(row.GNSS_LONGITUDE);
+              const alt = parseFloat(row.GNSS_ALTITUDE);
+              if ([lat, lng, alt].some(isNaN)) return null;
+              if (lat === 0 && lng === 0) return null;          // receiver reports 0,0 before it has a fix
+              return [lng, lat, alt];
             })
             .filter(p => p !== null);
 
@@ -64,16 +60,15 @@ function loadCSVAndUpdate() {
 }
 
 function updateLayers() {
-  if (rocketPath.length < 2) return;
+  if (!path.length) return;
 
   const lineData = [];
-  for (let i = 1; i < rocketPath.length; i++) {
-    lineData.push({ start: rocketPath[i - 1], end: rocketPath[i] });
+  for (let i = 1; i < path.length; i++) {
+    lineData.push({ start: path[i - 1], end: path[i] });
   }
+  const lastPos = path[path.length - 1];
 
-  const lastPos = rocketPath[rocketPath.length - 1];
-
-  deckgl.setProps({
+  const props = {
     layers: [
       new deck.LineLayer({
         id: 'line-layer',
@@ -83,15 +78,8 @@ function updateLayers() {
         getColor: [255, 0, 0, 200],
         getWidth: 7
       }),
-      new deck.ScatterplotLayer({
-        id: 'points-layer',
-        data: rocketPath,
-        getPosition: d => d,
-        getFillColor: [0, 200, 255],
-        getRadius: 0
-      }),
       new deck.IconLayer({
-        id: 'rocket-marker',
+        id: 'cansat-marker',
         data: [{ position: lastPos }],
         getIcon: d => 'rocket',
         getPosition: d => d.position,
@@ -104,15 +92,23 @@ function updateLayers() {
         }
       })
     ]
-  });
+  };
+  if (!flownToFix) {                                              // first fix: fly in from the world view
+    flownToFix = true;
+    props.initialViewState = {
+      longitude: lastPos[0], latitude: lastPos[1], zoom: 16, pitch: 60, bearing: 0,
+      transitionDuration: 2000, transitionInterpolator: new deck.FlyToInterpolator()
+    };
+  }
+  deckgl.setProps(props);
 
   const tracker = document.getElementById("tracker");
-  if (tracker && lastPos) {
+  if (tracker) {
     tracker.innerHTML = `
-      <b>Rocket Position</b><br>
+      <b>CanSat Position</b><br>
       Lat: ${lastPos[1].toFixed(6)} <br>
       Lng: ${lastPos[0].toFixed(6)} <br>
-      Alt: ${lastPos[2].toFixed(2)} m
+      Alt: ${lastPos[2].toFixed(1)} m
     `;
   }
 }
