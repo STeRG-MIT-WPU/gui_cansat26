@@ -39,11 +39,12 @@
                 <div  id="timer"><h3>T+--:--:--</h3></div>
             </div> 
 
-      <!-- telemetry link switcher: each link is its own screen (?src=), open several tabs for side by side -->
+      <!-- telemetry link switcher: one coloured circle per link (?src=), the active one has a ring:
+           green = packet in the last 3 s, red = link quiet. Hover for the name. -->
       <div class="source-switch">
-        <a href="?src=xbee" data-src="xbee">XBEE</a>
-        <a href="?src=lora" data-src="lora">LORA</a>
-        <a href="?src=mqtt" data-src="mqtt">MQTT</a>
+        <a href="?src=xbee" data-src="xbee" title="XBEE"></a>
+        <a href="?src=lora" data-src="lora" title="LORA"></a>
+        <a href="?src=mqtt" data-src="mqtt" title="MQTT"></a>
       </div>
 
             <div class="logo">
@@ -243,7 +244,8 @@
  <!--command line-->
 
  <div class="command-box">
-    <input id="commandInput" type="text" placeholder="ENTER COMMAND..." autocomplete="off">
+    <select id="commandPick" title="FC telecommands (GUI_HANDOFF.md)"><option value="">COMMANDS</option></select>
+    <input id="commandInput" type="text" placeholder="PICK A COMMAND OR TYPE IT, ENTER SENDS" autocomplete="off">
 </div>
 
 <!--telemetry_data-->
@@ -342,7 +344,7 @@
       
       <button class="control-button">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera-icon lucide-camera"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></svg>
-        <span class="label"><a href="./camera.html" target="_blank">CAMERA</a></span>
+        <span class="label"><a href="./camera.html" target="_blank" id="camera-link">CAMERA</a></span>
       </button>
 
       <button class="control-button">
@@ -351,6 +353,12 @@
       </button>
   </div>
   
+  <!-- COM port of each radio, bottom-left: lists what is plugged in (server.py /ports), remembered for the next start -->
+  <div class="port-select">
+    <label data-src="xbee">XBEE <select id="port-xbee"><option value="">--</option></select><span class="dot" id="dot-xbee"></span></label>
+    <label data-src="lora">LORA <select id="port-lora"><option value="">--</option></select><span class="dot" id="dot-lora"></span></label>
+  </div>
+
 <div class="last-divider"> </div>
 
 

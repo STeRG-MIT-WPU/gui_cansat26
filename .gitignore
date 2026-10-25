@@ -4,4 +4,5 @@ images/
 data_xbee.csv
 data_lora.csv
 data_mqtt.csv
+ports.json
 node_modules/

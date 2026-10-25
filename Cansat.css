@@ -127,42 +127,89 @@ body > * {
     text-shadow: 1px 1px 3px rgb(36, 33, 33);
 }
 
+:root {
+    --xbee: #ff9f1c;                       /* link colours: switch circles + COM selector labels */
+    --lora: #b16cff;
+    --mqtt: #10eaf0;
+}
+
 .source-switch {
     display: flex;
-    gap: 0.5rem;
-    font-family: 'orbitron', sans-serif;
+    gap: 0.8rem;
+    align-items: center;
 }
 
 .source-switch a {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    opacity: 0.5;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.source-switch a:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+.source-switch a[data-src="xbee"] { background: var(--xbee); }
+.source-switch a[data-src="lora"] { background: var(--lora); }
+.source-switch a[data-src="mqtt"] { background: var(--mqtt); }
+
+.source-switch a.active {               /* ring: green = packet in the last 3 s, red = link quiet */
+    opacity: 1;
+    border-color: #1ed83a;
+    box-shadow: 0 0 10px #fff;
+}
+
+body.link-stale .source-switch a.active {
+    border-color: #f44336;
+}
+
+.port-select {                          /* bottom row, left of the control panel */
+    grid-area: ctrl;
+    justify-self: start;
+    align-self: center;
+    margin-left: 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-family: 'orbitron', sans-serif;
+    font-size: 0.85rem;
+}
+
+.port-select label {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.port-select label[data-src="xbee"] { color: var(--xbee); }
+.port-select label[data-src="lora"] { color: var(--lora); }
+
+.port-select select {
+    width: 8em;
+    padding: 0.3rem 0.4rem;
+    background: #111;
     color: var(--cyan);
-    text-decoration: none;
-    font-size: 1.1rem;
-    padding: 0.45rem 1.1rem;
     border: 1px solid var(--cyan);
     border-radius: 6px;
-    background: rgba(0, 0, 0, 0.4);
-    white-space: nowrap;
+    font-family: inherit;
+    font-size: inherit;
 }
 
-.source-switch a.active {
-    background: var(--cyan);
-    color: #000;
-    box-shadow: 0 0 8px var(--cyan);
-}
-
-.source-switch a.active::before {      /* green = packet in the last 3 s, red = link quiet */
-    content: '';
+.port-select .dot {                  /* grey = no port, red = port chosen but not open, green = open */
     display: inline-block;
     width: 0.7em;
     height: 0.7em;
+    margin-left: 0.4em;
     border-radius: 50%;
-    background: #1ed83a;
-    margin-right: 0.5em;
+    background: #555;
 }
 
-body.link-stale .source-switch a.active::before {
-    background: #f44336;
-}
+.port-select .dot.retry { background: #f44336; }
+.port-select .dot.open { background: #1ed83a; }
 
 .nav-divider {
     grid-area: div;
@@ -371,6 +418,21 @@ hr {
     background-color: rgba(0, 0, 0, 0.25);
     padding: 0 1rem;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.command-box select {
+    background: #0b1a1c;
+    color: #1ed83a;
+    border: 1px solid #1ed83a66;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    padding: 0.25rem 0.3rem;
+    max-width: 40%;
+    cursor: pointer;
 }
 
 .command-box input {
@@ -379,7 +441,8 @@ hr {
     color: #1ed83a;
     font-weight: bold;
     font-size: 1.2rem;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     height: 100%;
     text-transform: uppercase;
     outline: none;

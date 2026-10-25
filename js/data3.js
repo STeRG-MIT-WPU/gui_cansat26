@@ -225,18 +225,69 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(`.source-switch a[data-src="${SRC}"]`)?.classList.add("active");
     setInterval(() => document.body.classList.toggle("link-stale", Date.now() - lastRx > 3000), 1000);
 
-    // --- Command box: Enter sends the line out on the selected link (server.py /cmd) ---
-    const cmdInput = document.getElementById("commandInput");
+    // --- Command box: menu of FC telecommands (server.py COMMANDS, from FC/GUI_HANDOFF.md), Enter sends on this link.
+    //     The server validates the line and answers 409 for RESET/BURN/DEPLOY/STATE/... until confirmed here. ---
+    const cmdInput = document.getElementById("commandInput"), cmdPick = document.getElementById("commandPick");
+    fetch("/commands").then(r => r.json()).then(list => {
+        const groups = {};
+        for (const c of list) {
+            groups[c.group] ??= cmdPick.appendChild(Object.assign(document.createElement("optgroup"), { label: c.group }));
+            groups[c.group].appendChild(new Option(c.text + (c.confirm ? "  (confirm)" : ""), c.text));
+        }
+    }).catch(() => {});
+    cmdPick?.addEventListener("change", () => {
+        const t = cmdPick.value, now = new Date();
+        cmdPick.value = "";
+        if (!t) return;
+        cmdInput.value = t === "TIME hh mm ss" ? `TIME ${now.getHours()} ${now.getMinutes()} ${now.getSeconds()}`   // PC clock
+                                              : t.replace(/<.*$/, "");                                              // "<us>" -> type it
+        cmdInput.focus();
+        cmdInput.placeholder = "";
+    });
+    const postCmd = (cmd, confirmed) => fetch("/cmd", { method: "POST", headers: { "Content-Type": "application/json" },
+                                                       body: JSON.stringify({ src: SRC, cmd, confirmed }) })
+        .then(async r => ({ status: r.status, ...(await r.json()) })).catch(() => ({ status: 0, error: "server not reachable" }));
     cmdInput?.addEventListener("keydown", async e => {
-        const cmd = cmdInput.value.trim();
+        const cmd = cmdInput.value.trim().toUpperCase();
         if (e.key !== "Enter" || !cmd) return;
+        let r = await postCmd(cmd, false);
+        if (r.status === 409) {
+            if (!confirm(`${cmd}\n\nThe flight computer acts on this immediately, there is no arm step.\nExpect: ${r.watch}\n\nSend it?`))
+                return cmdInput.placeholder = "CANCELLED: " + cmd, void (cmdInput.value = "");
+            r = await postCmd(cmd, true);
+        }
         cmdInput.value = "";
-        const r = await fetch("/cmd", { method: "POST", headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({ src: SRC, cmd }) }).catch(() => ({ ok: false }));
-        cmdInput.placeholder = (r.ok ? "SENT: " : "FAILED: ") + cmd;
+        cmdInput.placeholder = r.ok ? `SENT ${cmd}  -  WATCH: ${r.watch}` : `REFUSED ${cmd}: ${r.error}`;
+    });
+
+    // --- COM port selectors: /ports lists what is plugged in; POST assigns a port to a link (server.py) ---
+    async function refreshPorts(choice) {
+        const opts = choice ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(choice) } : {};
+        const r = await fetch("/ports", opts).catch(() => null);
+        if (!r || !r.ok) return;
+        const st = await r.json();
+        for (const link of ["xbee", "lora"]) {
+            const sel = document.getElementById("port-" + link), cur = st[link].port || "";
+            if (document.activeElement !== sel) {                    // don't rebuild the list while it is open
+                const items = st.ports.map(p => `<option value="${p.device}" title="${p.description}">${p.device}</option>`);
+                if (cur && !st.ports.some(p => p.device === cur)) items.push(`<option value="${cur}">${cur} (unplugged)</option>`);
+                sel.innerHTML = '<option value="">--</option>' + items.join("");
+                sel.value = cur;
+            }
+            document.getElementById("dot-" + link).className = "dot " + (st[link].open ? "open" : cur ? "retry" : "");
+        }
+    }
+    ["xbee", "lora"].forEach(link =>
+        document.getElementById("port-" + link).addEventListener("change", e => refreshPorts({ [link]: e.target.value })));
+    setInterval(() => refreshPorts(), 2000);
+
+    // --- Desktop app (app.py): CAMERA opens a second native window instead of a browser tab ---
+    document.getElementById("camera-link")?.addEventListener("click", e => {
+        if (window.pywebview) { e.preventDefault(); pywebview.api.camera(); }
     });
 
     // --- START EVERYTHING ---
+    refreshPorts();
     restoreTable();
     loadCSVData();
     setInterval(updateClock, 1000);

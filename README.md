@@ -12,7 +12,8 @@ The frame format, MQTT settings and image protocol follow the flight software:
 
 ## Features
 
-- One identical dashboard per link, selected with `?src=xbee|lora|mqtt` (XBEE / LORA / MQTT tabs).
+- One identical dashboard per link, selected with `?src=xbee|lora|mqtt` or the three coloured circles in the
+  top bar (orange XBEE, purple LORA, cyan MQTT; hover for the name).
 - Live telemetry: accelerometer, gyro, magnetometer, Euler angles, altitude, pressure,
   temperature, velocity, GNSS, current, voltage, battery %, software state, error flags.
 - Mission clock (`T+hh:mm:ss`) and packet counter from the packet itself.
@@ -21,39 +22,52 @@ The frame format, MQTT settings and image protocol follow the flight software:
 - 3D CanSat model (`CanSat.glb`) driven by the received roll / pitch / yaw, with a calibrate button.
 - GNSS map (deck.gl + MapLibre on ESRI imagery) that flies to the first fix and draws the track.
 - CAMERA tab opens a separate screen showing the latest image received on XBee and on MQTT.
-- Command box: type a command and press Enter, it goes out on the link currently shown.
+- Telecommands: a menu of every FC command from the FC handoff next to the command box; Enter sends
+  it on the link currently shown, dangerous ones ask for confirmation first (see below).
 - Raw data table of the last 100 packets.
-- Link indicator turns red when no packet arrived for 3 s.
+- The ring around the active circle is green while packets arrive and red after 3 s of silence.
 
 ## Requirements
 
 - Python 3.10+ (tested on 3.13)
 - `pip install -r requirements.txt` (pyserial, paho-mqtt)
-- A modern browser (Chrome / Edge). The map and 3D libraries load from CDNs, so the ground
-  station PC needs internet access for the map tiles and for MQTT.
+- The desktop window uses Microsoft Edge WebView2, which is part of Windows 10/11. The map
+  and 3D libraries load from CDNs, so the ground station PC needs internet access for the map
+  tiles and for MQTT.
 
 Node / Electron are optional (`npm run start:electron`) and not needed for normal use.
 
 ## Running
 
+Desktop app (one command, opens its own window):
+
 ```
-python server.py --xbee COM5 --lora COM6
+python app.py
 ```
 
-This starts an HTTP server on port 8000, opens the browser and connects the links:
+Pick the COM port of the XBee and LoRa radios from the two selectors at the bottom left. The list
+shows every port currently plugged in and refreshes every 2 s, so radios can be connected after
+the app is open. The dot next to each selector is grey (no port), red (port chosen but not open,
+retried every 3 s) or green (receiving). The choice is saved in `ports.json` and preselected the
+next time the app starts; change it there whenever the port numbers move.
+
+The same GUI can also be served to a normal browser:
+
+```
+python server.py
+```
+
+Options for both commands:
 
 | Option          | Default            | Meaning                                                |
 |-----------------|--------------------|--------------------------------------------------------|
-| `--xbee COMx`   | `COM5`             | Serial port of the XBee ground radio                   |
-| `--lora COMx`   | `COM6`             | Serial port of the LoRa ground receiver                |
+| `--xbee COMx`   | last GUI choice    | Serial port of the XBee ground radio                   |
+| `--lora COMx`   | last GUI choice    | Serial port of the LoRa ground receiver                |
 | `--baud N`      | `115200`           | Baud rate for both serial links                        |
 | `--port N`      | `8000`             | HTTP port                                              |
-| `--no-browser`  | off                | Do not open the browser automatically                  |
+| `--no-browser`  | off                | `server.py` only: do not open the browser              |
 
-A missing serial port is retried every 3 s, so the server can be started before the radios are
-plugged in. To find the port numbers run `python -m serial.tools.list_ports -v`.
-
-Screens:
+Screens (the desktop app opens the first one; CAMERA opens in a second window):
 
 - http://localhost:8000/index.html?src=xbee
 - http://localhost:8000/index.html?src=lora
@@ -63,6 +77,36 @@ Screens:
 MQTT uses `broker.hivemq.com:1883`, topics `cansat/011/tlm` (telemetry), `cansat/011/cmd`
 (uplink) and `cansat/011/img` (images). Change the constants at the top of `server.py` if the
 team ID or broker changes.
+
+## Telecommands
+
+The command box on each dashboard follows `GUI_HANDOFF.md` of the FC firmware (branch `FC`): the
+GUI sends the exact upper-case strings, the FC acts on them immediately and never answers over the
+radio, so each menu entry comes with the telemetry field to watch for confirmation.
+
+How to operate it:
+
+1. Open the **COMMANDS** menu in the command box and pick an entry. Entries ending in `<...>` are
+   put in the box without the number so you type it (`SERVO ` + `1500`); `TIME hh mm ss` is
+   prefilled with the PC clock. You can also type the whole command yourself, case does not matter.
+2. Press **Enter**. The server checks the line (known command, argument in range, ASCII, 127 chars
+   max, 20 ms after the previous one) and writes it to the link of the screen you are on: the
+   serial port of that radio, or `cansat/011/cmd` on MQTT. Each screen only ever uses its own link.
+3. `RESET`, `PERSIST CLEAR`, `STATE n`, `DEPLOY`, `BURN`, `BURN <ms>` and `SD CLEAR` open a
+   confirmation dialog first, as the FC has no arm step. Cancel sends nothing.
+4. The box then shows `SENT <command> - WATCH: ...` with the expected evidence
+   (`PKT increments`, `STATE changes within one packet`, `$IMGSTART ...`), or `REFUSED` with the
+   reason. Every attempt is logged in `command.csv` with time, link and result.
+
+| Group      | Commands                                                                                              |
+|------------|-------------------------------------------------------------------------------------------------------|
+| Mission    | `ENABLE`, `DISABLE`, `TIME hh mm ss`, `CALIB`, `STATE 0..4`, `RESET`, `PERSIST CLEAR`                 |
+| Actuators  | `DEPLOY`, `PARA`, `SERVO STOW|DEPLOY|1000..2000`, `BURN [1..10000|OFF]`, `PROP ON|OFF|TARE`, `PROP HEADING deg`, `PROP 1|2|ALL us`, `RW ON|OFF`, `BUZZ ON|OFF` |
+| Camera     | `CAPTURE`, `IMG TX id`, `SD CLEAR`                                                                    |
+| Bench only | `BENCH ON|OFF`, `CAM AUTO ON|OFF`                                                                     |
+
+`SIM`, `DIAG`, `HELP`, `STATUS` and the other USB-only console commands are refused, as the handoff
+asks. `BUZZ ON` / `BUZZ OFF` is the recommended link test: it is audible on the CanSat.
 
 ## Data files
 
@@ -122,7 +166,8 @@ of missing chunks is printed.
 ## Repository layout
 
 ```
-server.py          serial + MQTT receiver, CSV logger, image reassembly, HTTP server, /cmd and /latest
+app.py             desktop window around server.py (pywebview)
+server.py          serial + MQTT receiver, CSV logger, image reassembly, HTTP server, /cmd, /latest, /ports
 test_server.py     self-check of the frame parser and image reassembly: python test_server.py
 index.html         main dashboard (Cansat.css)
 camera.html        camera screen (camera.css)
